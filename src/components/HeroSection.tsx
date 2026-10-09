@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
+import type { Product } from '../data/products'
+import { formatSoles } from '../utils/currency'
 
 interface HeroSectionProps {
+  featuredProduct: Product | null
   onAddToCart: () => void
 }
 
-export function HeroSection({ onAddToCart }: HeroSectionProps) {
+export function HeroSection({ featuredProduct, onAddToCart }: HeroSectionProps) {
   // Mantiene visible una cuenta regresiva de demostración para la oferta.
   const [secondsLeft, setSecondsLeft] = useState(5 * 60 * 60 + 42 * 60 + 18)
 
@@ -28,7 +31,7 @@ export function HeroSection({ onAddToCart }: HeroSectionProps) {
           </span>
           <h1 className="font-display text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
             Potencia Absoluta <br />
-            <span className="bg-gradient-to-r from-brand-400 via-brand-accent to-emerald-200 bg-clip-text text-transparent">NVIDIA RTX 4090 OC</span>
+            <span className="bg-gradient-to-r from-brand-400 via-brand-accent to-emerald-200 bg-clip-text text-transparent">{featuredProduct?.name ?? 'Catálogo NovaTech'}</span>
           </h1>
           <p className="max-w-xl text-sm leading-relaxed text-slate-300 sm:text-base">
             Experimenta gráficos ultrareales en 4K con trazado de rayos de 3ra generación y DLSS 3.5. Disponible con garantía extendida en NovaTech.
@@ -42,8 +45,8 @@ export function HeroSection({ onAddToCart }: HeroSectionProps) {
           <div className="flex flex-wrap items-center gap-5 pt-2">
             <div>
               <span className="block text-xs text-slate-400">Precio Exclusivo</span>
-              <span className="font-display text-3xl font-extrabold text-emerald-400">S/ 8,499.00</span>
-              <span className="ml-2 text-xs text-slate-500 line-through">S/ 9,299.00</span>
+              <span className="font-display text-3xl font-extrabold text-emerald-400">{featuredProduct ? formatSoles(featuredProduct.price) : 'Cargando...'}</span>
+              {featuredProduct?.oldPrice && <span className="ml-2 text-xs text-slate-500 line-through">{formatSoles(featuredProduct.oldPrice)}</span>}
             </div>
             <button type="button" onClick={onAddToCart} className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 px-8 py-4 font-extrabold text-slate-950 shadow-xl shadow-brand-500/20 transition hover:from-brand-400 hover:to-brand-500 active:scale-95">
               <i className="fa-solid fa-cart-plus" aria-hidden="true" /> Añadir Oferta al Carrito
@@ -58,14 +61,18 @@ export function HeroSection({ onAddToCart }: HeroSectionProps) {
               <span className="text-slate-400"><i className="fa-solid fa-star mr-1 text-amber-400" aria-hidden="true" /> 4.9 / 5</span>
             </div>
             <div className="animate-float relative my-4 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl bg-white">
-              <img src="/images/hero.jpg" alt="Tarjeta gráfica ROG Strix RTX 4090" className="h-full w-full object-contain p-2" />
+              {featuredProduct ? (
+                <img src={featuredProduct.image} alt={featuredProduct.name} className="h-full w-full object-contain p-2" />
+              ) : (
+                <i className="fa-solid fa-image text-5xl text-slate-400" aria-hidden="true" />
+              )}
             </div>
             <div className="z-10 flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/80 p-4 backdrop-blur-md">
               <div>
-                <h2 className="text-sm font-bold text-slate-100">ROG Strix RTX 4090 24GB</h2>
-                <p className="text-xs text-slate-400">Edición Especial OC</p>
+                <h2 className="text-sm font-bold text-slate-100">{featuredProduct?.name ?? 'Producto destacado'}</h2>
+                <p className="text-xs text-slate-400">{featuredProduct?.badge ?? 'Catálogo de productos'}</p>
               </div>
-              <span className="rounded-lg bg-brand-500/10 px-2.5 py-1 text-xs font-bold text-brand-400">S/ 8,499.00</span>
+              {featuredProduct && <span className="rounded-lg bg-brand-500/10 px-2.5 py-1 text-xs font-bold text-brand-400">{formatSoles(featuredProduct.price)}</span>}
             </div>
           </div>
         </div>

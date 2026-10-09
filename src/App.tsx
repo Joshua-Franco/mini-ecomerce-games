@@ -159,6 +159,8 @@ function App() {
 
   // Resuelve el producto actual para mostrar su ficha de detalle.
   const selectedProduct = products.find((product) => product.id === selectedProductId) ?? null
+  // Usa la tarjeta gráfica del catálogo para la imagen y la oferta de portada.
+  const featuredProduct = products.find((product) => product.category === 'gpu') ?? products[0] ?? null
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-dark-bg text-slate-100">
@@ -175,9 +177,8 @@ function App() {
       />
       {/* El cuerpo combina promoción, catálogo remoto y configurador de equipos. */}
       <main>
-        {/* La oferta destacada agrega el primer producto que entrega el backend. */}
-        <HeroSection onAddToCart={() => {
-          const featuredProduct = products[0]
+        {/* La portada usa el producto destacado y su imagen alojada en el backend. */}
+        <HeroSection featuredProduct={featuredProduct} onAddToCart={() => {
           if (!featuredProduct) {
             showToast('El catálogo todavía no está disponible')
             return
