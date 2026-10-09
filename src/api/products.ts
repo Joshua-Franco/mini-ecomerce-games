@@ -1,8 +1,8 @@
 import type { Product } from '../data/products'
 import { validate as isUuid } from 'uuid'
 
-// El backend local es el valor predeterminado; Vite permite cambiarlo por entorno.
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:6072/api'
+// El backend desplegado es el valor predeterminado; Vite permite cambiarlo por entorno.
+const API_URL = import.meta.env.VITE_API_URL ?? 'https://mini-backend-pm9f.onrender.com/api'
 
 // Describe la envoltura JSON que devuelve el endpoint de listado.
 interface ProductListResponse {

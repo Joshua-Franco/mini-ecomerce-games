@@ -7,7 +7,7 @@ Sitio web de comercio electrónico para explorar productos de tecnología, armar
 El frontend solicita el catálogo al iniciar y espera que la API Flask exponga:
 
 ```http
-GET http://127.0.0.1:6072/api/products
+GET https://mini-backend-pm9f.onrender.com/api/products
 ```
 
 La respuesta debe ser JSON con un arreglo `products`. Cada producto debe incluir un `id` con formato UUID y los datos usados por la tienda:
@@ -24,7 +24,7 @@ La respuesta debe ser JSON con un arreglo `products`. Cada producto debe incluir
       "badge": "Oferta",
       "icon": "fa-solid fa-microchip",
       "specs": "16 GB",
-      "image": "http://127.0.0.1:6072/static/producto.jpg"
+      "image": "https://mini-backend-pm9f.onrender.com/static/producto.jpg"
     }
   ]
 }
@@ -32,10 +32,10 @@ La respuesta debe ser JSON con un arreglo `products`. Cada producto debe incluir
 
 `oldPrice` es opcional. El sitio muestra un estado de carga, los productos o un mensaje de error con opción para reintentar si la API no está disponible o responde con un error.
 
-La dirección base predeterminada es `http://127.0.0.1:6072/api`. Puedes cambiarla creando `.env.local` en la raíz del frontend:
+La dirección base predeterminada es `https://mini-backend-pm9f.onrender.com/api`. Puedes cambiarla creando `.env.local` en la raíz del frontend:
 
 ```dotenv
-VITE_API_URL=http://127.0.0.1:6072/api
+VITE_API_URL=https://mini-backend-pm9f.onrender.com/api
 ```
 
 `VITE_API_URL` debe incluir el prefijo que precede a `/products`; por ejemplo, si vale `https://servidor.example/api`, el frontend consultará `https://servidor.example/api/products`. Reinicia Vite al cambiar esta variable. Si frontend y backend usan distintos orígenes, Flask debe permitir el origen del frontend mediante CORS.
@@ -62,7 +62,7 @@ VITE_API_URL=http://127.0.0.1:6072/api
    python -m flask --app app run --host 127.0.0.1 --port 6072
    ```
 
-   El nombre de módulo y la forma de iniciar Flask dependen del backend; ajusta `--app app` a la estructura de ese proyecto. Confirma que `http://127.0.0.1:6072/api/products` responda con el JSON esperado.
+   El nombre de módulo y la forma de iniciar Flask dependen del backend; ajusta `--app app` a la estructura de ese proyecto. La aplicación frontend usa por defecto el servidor publicado en `https://mini-backend-pm9f.onrender.com/api/products`; para apuntar a tu Flask local, establece `VITE_API_URL=http://127.0.0.1:6072/api` en `.env.local`.
 
 3. En la terminal del frontend, inicia Vite:
 
@@ -83,11 +83,11 @@ El workflow [deploy.yml](./.github/workflows/deploy.yml) compila y publica el si
 Para habilitar el despliegue:
 
 1. En GitHub, abre **Settings → Pages** y selecciona **GitHub Actions** como fuente de publicación.
-2. Si el catálogo debe estar disponible en el sitio publicado, en **Settings → Secrets and variables → Actions → Variables** crea la variable de repositorio `VITE_API_URL`. Asígnale la URL base pública del backend, incluido el prefijo `/api`, por ejemplo `https://api.ejemplo.com/api`.
-3. Configura Flask para aceptar solicitudes CORS desde `https://joshua-franco.github.io` y verifica que el endpoint `https://api.ejemplo.com/api/products` sea accesible públicamente por HTTPS.
+2. El workflow usa por defecto `https://mini-backend-pm9f.onrender.com/api`. Si necesitas otro backend, en **Settings → Secrets and variables → Actions → Variables** crea o actualiza la variable de repositorio `VITE_API_URL` con su URL base, incluido el prefijo `/api`.
+3. Verifica que el backend permita solicitudes CORS desde `https://joshua-franco.github.io` y que `https://mini-backend-pm9f.onrender.com/api/products` responda públicamente por HTTPS.
 4. Envía cambios a `main` o ejecuta manualmente el workflow. La variable `VITE_API_URL` se incorpora durante la compilación; si la cambias, vuelve a ejecutar el workflow para publicar una compilación nueva.
 
-Si no defines `VITE_API_URL`, el workflow usa `http://127.0.0.1:6072/api`, que sirve para desarrollo local, pero **no** para los visitantes de GitHub Pages. GitHub Pages solo aloja el frontend; el backend Flask debe desplegarse y mantenerse por separado.
+GitHub Pages solo aloja el frontend; el backend Flask se despliega y mantiene por separado. En desarrollo, el frontend también usa el backend publicado de forma predeterminada; define `VITE_API_URL=http://127.0.0.1:6072/api` en `.env.local` si deseas conectarlo a una instancia local.
 
 ## Funcionalidades
 

@@ -19,7 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VITE_API_URL: ${{ vars.VITE_API_URL || 'http://127.0.0.1:6072/api' }}
+      VITE_API_URL: ${{ vars.VITE_API_URL || 'https://mini-backend-pm9f.onrender.com/api' }}
 
     steps:
       - name: Checkout repository
