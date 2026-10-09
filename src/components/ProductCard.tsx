@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Product } from '../data/products'
 import { useCartStore } from '../store/useCartStore'
 import { formatSoles } from '../utils/currency'
+import { getProductUrl } from '../utils/productUrl'
 
 interface ProductCardProps {
   product: Product
@@ -10,9 +11,11 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onOpen, onToast }: ProductCardProps) {
+  // Cambia a un icono cuando la imagen del producto no puede cargarse.
   const addProduct = useCartStore((state) => state.addProduct)
   const [imageFailed, setImageFailed] = useState(false)
 
+  // Muestra datos del producto y ofrece vista previa o añadir al carrito.
   return (
     <article className="card-hover-effect group relative flex flex-col justify-between rounded-3xl border border-slate-800 bg-slate-900 p-5">
       <div>
@@ -22,7 +25,10 @@ export function ProductCard({ product, onOpen, onToast }: ProductCardProps) {
             <i className="fa-regular fa-eye" aria-hidden="true" />
           </button>
         </div>
-        <button type="button" onClick={onOpen} className="mb-4 flex h-36 w-full items-center justify-center rounded-2xl bg-slate-950/60 transition duration-300 group-hover:scale-[1.02]">
+        <a href={getProductUrl(product.id)} onClick={(event) => {
+          event.preventDefault()
+          onOpen()
+        }} aria-label={`Ver ${product.name}`} className="mb-4 flex h-36 w-full items-center justify-center rounded-2xl bg-slate-950/60 transition duration-300 group-hover:scale-[1.02]">
           {imageFailed ? (
             <i className={`fa-solid ${product.icon} text-5xl text-brand-400/80`} aria-hidden="true" />
           ) : (
@@ -34,8 +40,17 @@ export function ProductCard({ product, onOpen, onToast }: ProductCardProps) {
               className="h-full w-full rounded-2xl object-contain p-2"
             />
           )}
-        </button>
-        <button type="button" onClick={onOpen} className="mb-1 line-clamp-2 text-left text-sm font-semibold text-slate-100 transition hover:text-brand-400">{product.name}</button>
+        </a>
+        <a
+          href={getProductUrl(product.id)}
+          onClick={(event) => {
+            event.preventDefault()
+            onOpen()
+          }}
+          className="mb-1 line-clamp-2 text-left text-sm font-semibold text-slate-100 transition hover:text-brand-400"
+        >
+          {product.name}
+        </a>
         <p className="mb-3 text-xs text-slate-400">{product.specs}</p>
       </div>
       <div className="flex items-center justify-between border-t border-slate-800 pt-3">

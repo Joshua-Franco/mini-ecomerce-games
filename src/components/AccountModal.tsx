@@ -6,6 +6,7 @@ export interface Customer {
 }
 
 interface StoredCustomer extends Customer {
+  // Estos datos solo sirven para cuentas de demostración guardadas localmente.
   salt: string
   passwordHash: string
 }
@@ -21,18 +22,21 @@ interface AccountModalProps {
 const USERS_KEY = 'novatech_demo_users_v1'
 
 async function hashPassword(password: string, salt: string) {
+  // Genera un hash local con sal; no reemplaza autenticación del servidor.
   const bytes = new TextEncoder().encode(`${salt}:${password}`)
   const digest = await crypto.subtle.digest('SHA-256', bytes)
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
 export function AccountModal({ open, customer, onClose, onLogin, onLogout }: AccountModalProps) {
+  // Controla el formulario de acceso/registro y sus errores de validación.
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [error, setError] = useState('')
 
   if (!open) return null
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // Lee las cuentas guardadas antes de autenticar o registrar al cliente.
     event.preventDefault()
     setError('')
     const formData = new FormData(event.currentTarget)
@@ -48,6 +52,7 @@ export function AccountModal({ open, customer, onClose, onLogin, onLogout }: Acc
     }
 
     if (tab === 'register') {
+      // Verifica todos los campos antes de guardar una cuenta nueva.
       const name = String(formData.get('name') ?? '').trim()
       const confirmation = String(formData.get('confirmation') ?? '')
       if (name.length < 2) return setError('Ingresa tu nombre completo.')
@@ -68,6 +73,7 @@ export function AccountModal({ open, customer, onClose, onLogin, onLogout }: Acc
       return
     }
 
+    // En el acceso, compara el hash calculado con el registro local encontrado.
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return setError('Ingresa un correo válido.')
     const found = users.find((user) => user.email === email)
     if (!found) return setError('Correo o contraseña incorrectos. Si aún no tienes cuenta, crea una.')

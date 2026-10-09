@@ -8,6 +8,7 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ onCheckout, checkingOut }: CartDrawerProps) {
+  // Lee las operaciones del carrito desde el store persistente.
   const items = useCartStore((state) => state.items)
   const isOpen = useCartStore((state) => state.isOpen)
   const setOpen = useCartStore((state) => state.setOpen)
@@ -18,6 +19,7 @@ export function CartDrawer({ onCheckout, checkingOut }: CartDrawerProps) {
   const subtotal = total / 1.18
 
   useEffect(() => {
+    // Evita que la página de fondo se desplace mientras el carrito está abierto.
     if (!isOpen) return
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -26,6 +28,7 @@ export function CartDrawer({ onCheckout, checkingOut }: CartDrawerProps) {
     }
   }, [isOpen])
 
+  // Muestra los artículos, totales con IGV y acciones del pedido.
   return (
     <div aria-hidden={!isOpen} className={`fixed inset-0 z-50 overflow-hidden transition-[opacity,visibility] duration-300 ${isOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
       <button type="button" aria-label="Cerrar carrito" onClick={() => setOpen(false)} className="absolute inset-0 cursor-default bg-slate-950/70" />

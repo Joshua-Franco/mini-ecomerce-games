@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
 import type { Customer } from './AccountModal'
-import { products } from '../data/products'
+import type { Product } from '../data/products'
 import { useCartStore } from '../store/useCartStore'
 
 interface HeaderProps {
+  products: Product[]
   customer: Customer | null
   onOpenAccount: () => void
   onOpenBuilder: () => void
@@ -21,7 +22,9 @@ const categories = [
   { id: 'peripherals', label: 'Periféricos', icon: 'fa-keyboard' },
 ]
 
+// Combina búsqueda, navegación de categorías, cuenta y acceso al carrito.
 export function Header({
+  products,
   customer,
   onOpenAccount,
   onOpenBuilder,
@@ -36,21 +39,24 @@ export function Header({
   const cartCount = useCartStore((state) => state.items.reduce((sum, item) => sum + item.qty, 0))
   const setCartOpen = useCartStore((state) => state.setOpen)
   const results = useMemo(
+    // Actualiza las sugerencias de búsqueda cuando cambia el texto o el catálogo.
     () =>
       search.trim()
         ? products.filter((product) =>
             `${product.name} ${product.specs}`.toLowerCase().includes(search.trim().toLowerCase()),
           )
         : [],
-    [search],
+    [products, search],
   )
 
   const applyCategory = (category: string) => {
+    // Cambia el filtro y desplaza la página al catálogo.
     onCategoryChange(category)
     document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    // Confirma la búsqueda y lleva al usuario a los resultados.
     event.preventDefault()
     onSearch(search)
     setSearchOpen(false)

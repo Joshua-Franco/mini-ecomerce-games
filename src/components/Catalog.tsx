@@ -1,12 +1,15 @@
 import type { Product } from '../data/products'
-import { products } from '../data/products'
 import { ProductCard } from './ProductCard'
 
 interface CatalogProps {
+  products: Product[]
+  loading: boolean
+  error: string
+  onRetry: () => void
   category: string
   search: string
   onCategoryChange: (category: string) => void
-  onOpenProduct: (id: number) => void
+  onOpenProduct: (id: string) => void
   onToast: (message: string) => void
 }
 
@@ -20,7 +23,9 @@ const filters = [
   ['peripherals', 'Periféricos'],
 ]
 
-export function Catalog({ category, search, onCategoryChange, onOpenProduct, onToast }: CatalogProps) {
+// Filtra los datos del servidor y presenta estados de carga, error o resultados.
+export function Catalog({ products, loading, error, onRetry, category, search, onCategoryChange, onOpenProduct, onToast }: CatalogProps) {
+  // Aplica categoría y texto de búsqueda sin alterar la lista recibida.
   const visibleProducts: Product[] = products.filter((product) => {
     const matchesCategory = category === 'all' || product.category === category
     const matchesSearch = !search.trim() || `${product.name} ${product.specs} ${product.badge}`.toLowerCase().includes(search.trim().toLowerCase())
@@ -47,7 +52,14 @@ export function Catalog({ category, search, onCategoryChange, onOpenProduct, onT
           ))}
         </div>
       </div>
-      {visibleProducts.length ? (
+      {loading ? (
+        <p className="py-12 text-center text-sm text-slate-400">Cargando productos...</p>
+      ) : error ? (
+        <div className="py-12 text-center text-sm text-rose-300" role="alert">
+          <p>{error}</p>
+          <button type="button" onClick={onRetry} className="mt-3 rounded-xl bg-slate-800 px-4 py-2 font-semibold text-white hover:bg-slate-700">Reintentar</button>
+        </div>
+      ) : visibleProducts.length ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {visibleProducts.map((product) => <ProductCard key={product.id} product={product} onOpen={() => onOpenProduct(product.id)} onToast={onToast} />)}
         </div>

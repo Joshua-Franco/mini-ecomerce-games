@@ -4,8 +4,10 @@ interface FooterProps {
 }
 
 export function Footer({ onToast, onOrderTracker }: FooterProps) {
+  // Reutiliza una notificación para los enlaces informativos de redes.
   const showSocialMessage = () => onToast('Redes sociales NovaTech')
 
+  // Presenta datos de contacto, pagos y atención al cliente.
   return (
     <footer className="mt-auto border-t border-slate-800/80 bg-slate-950 px-4 py-12 text-slate-400 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-8 md:grid-cols-4">

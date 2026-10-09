@@ -1,8 +1,10 @@
+// Define el nombre y las alternativas disponibles para cada grupo del configurador.
 export interface PcPart {
   label: string
   options: { name: string; price: number }[]
 }
 
+// Opciones locales del configurador con precios expresados en soles.
 export const pcParts: PcPart[] = [
   {
     label: 'Procesador (CPU)',

@@ -5,9 +5,11 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ onAddToCart }: HeroSectionProps) {
+  // Mantiene visible una cuenta regresiva de demostración para la oferta.
   const [secondsLeft, setSecondsLeft] = useState(5 * 60 * 60 + 42 * 60 + 18)
 
   useEffect(() => {
+    // Actualiza el reloj cada segundo y detiene el temporizador al desmontarse.
     const timer = window.setInterval(() => setSecondsLeft((seconds) => (seconds > 0 ? seconds - 1 : 12 * 60 * 60)), 1000)
     return () => window.clearInterval(timer)
   }, [])
@@ -16,6 +18,7 @@ export function HeroSection({ onAddToCart }: HeroSectionProps) {
   const minutes = String(Math.floor((secondsLeft % 3600) / 60)).padStart(2, '0')
   const seconds = String(secondsLeft % 60).padStart(2, '0')
 
+  // Presenta la promoción principal y el acceso rápido para añadirla al carrito.
   return (
     <section id="inicio" className="hero-glow relative overflow-hidden border-b border-slate-800/80 py-10 md:py-16">
       <div className="relative z-10 mx-auto grid max-w-screen-2xl grid-cols-1 items-center gap-8 px-4 lg:grid-cols-12 sm:px-6 lg:px-8">

@@ -9,9 +9,11 @@ interface ProductModalProps {
 }
 
 export function ProductModal({ product, onClose, onToast }: ProductModalProps) {
+  // No renderiza el diálogo cuando todavía no hay producto seleccionado.
   const addProduct = useCartStore((state) => state.addProduct)
   if (!product) return null
 
+  // Presenta la ficha completa y la acción de compra del producto elegido.
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-md" onMouseDown={(event) => {
       if (event.target === event.currentTarget) onClose()

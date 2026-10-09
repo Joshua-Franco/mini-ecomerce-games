@@ -10,6 +10,7 @@ interface PcBuilderProps {
 }
 
 export function PcBuilder({ open, onClose, onToast }: PcBuilderProps) {
+  // Guarda el índice de la alternativa elegida para cada tipo de componente.
   const [selection, setSelection] = useState<number[]>(pcParts.map(() => -1))
   const addCustomBuild = useCartStore((state) => state.addCustomBuild)
   if (!open) return null
@@ -18,6 +19,7 @@ export function PcBuilder({ open, onClose, onToast }: PcBuilderProps) {
   const total = selectedParts.reduce((sum, part) => sum + (part?.price ?? 0), 0)
 
   const addBuild = () => {
+    // Exige completar cada grupo antes de crear el artículo personalizado.
     if (selectedParts.some((part) => !part)) {
       onToast('Completa los 4 componentes para armar tu PC')
       return
@@ -29,6 +31,7 @@ export function PcBuilder({ open, onClose, onToast }: PcBuilderProps) {
     onToast('¡PC ensamblada añadida al carrito!')
   }
 
+  // Presenta opciones, precio acumulado y acción para añadir el ensamble.
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-md" onMouseDown={(event) => {
       if (event.target === event.currentTarget) onClose()
