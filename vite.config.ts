@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 
 // Activa React y Tailwind CSS en el servidor y el proceso de compilación de Vite.
 export default defineConfig({
+  base: '/mini-ecomerce-games/',
   plugins: [react(), tailwindcss()],
   server: {
     host: 'localhost',

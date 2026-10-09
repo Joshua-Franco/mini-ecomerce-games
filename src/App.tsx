@@ -17,7 +17,11 @@ import { validate as isUuid } from 'uuid'
 
 function getProductIdFromUrl(): string | null {
   // Reconoce rutas de producto solo cuando el segmento contiene un UUID válido.
-  const match = window.location.pathname.match(/^\/producto\/([^/]+)\/?$/)
+  const basePath = import.meta.env.BASE_URL
+  const pathname = window.location.pathname.startsWith(basePath)
+    ? window.location.pathname.slice(basePath.length)
+    : ''
+  const match = pathname.match(/^producto\/([^/]+)\/?$/)
   return match && isUuid(match[1]) ? match[1] : null
 }
 
@@ -90,7 +94,7 @@ function App() {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
       setBuilderOpen(false)
-      if (getProductIdFromUrl()) window.history.replaceState({}, '', '/')
+      if (getProductIdFromUrl()) window.history.replaceState({}, '', import.meta.env.BASE_URL)
       setSelectedProductId(null)
       setAccountOpen(false)
       setCartOpen(false)
@@ -114,7 +118,7 @@ function App() {
 
   const closeProduct = () => {
     // Al cerrar el detalle, vuelve a la ruta principal sin recargar la página.
-    if (getProductIdFromUrl()) window.history.replaceState({}, '', '/')
+    if (getProductIdFromUrl()) window.history.replaceState({}, '', import.meta.env.BASE_URL)
     setSelectedProductId(null)
   }
 

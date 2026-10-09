@@ -6,5 +6,5 @@ export function getProductUrl(productId: string): string {
     throw new Error('No se puede crear un enlace para un producto con UUID inválido.')
   }
 
-  return `/producto/${stringify(parse(productId))}`
+  return `${import.meta.env.BASE_URL}producto/${stringify(parse(productId))}`
 }

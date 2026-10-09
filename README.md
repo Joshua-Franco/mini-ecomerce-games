@@ -70,9 +70,24 @@ VITE_API_URL=http://127.0.0.1:6072/api
    pnpm dev
    ```
 
-4. Abre [http://localhost:5475](http://localhost:5475).
+4. Abre [http://localhost:5475/mini-ecomerce-games/](http://localhost:5475/mini-ecomerce-games/).
 
 Vite usa el puerto `5475` y está configurado con `strictPort`: si ya está ocupado, libera ese puerto o cambia `server.port` en `vite.config.ts`. La dirección de la API se configura por separado con `VITE_API_URL`.
+
+## Publicar en GitHub Pages
+
+El workflow [deploy.yml](./.github/workflows/deploy.yml) compila y publica el sitio en GitHub Pages cuando hay un `push` a `main`; también se puede ejecutar manualmente desde **Actions → Deploy React + Vite to GitHub Pages → Run workflow**. Configura la base `/mini-ecomerce-games/` y publica una página fallback para que las rutas de detalle de producto sigan cargando al actualizarlas. La dirección del sitio será:
+
+<https://joshua-franco.github.io/mini-ecomerce-games/>
+
+Para habilitar el despliegue:
+
+1. En GitHub, abre **Settings → Pages** y selecciona **GitHub Actions** como fuente de publicación.
+2. Si el catálogo debe estar disponible en el sitio publicado, en **Settings → Secrets and variables → Actions → Variables** crea la variable de repositorio `VITE_API_URL`. Asígnale la URL base pública del backend, incluido el prefijo `/api`, por ejemplo `https://api.ejemplo.com/api`.
+3. Configura Flask para aceptar solicitudes CORS desde `https://joshua-franco.github.io` y verifica que el endpoint `https://api.ejemplo.com/api/products` sea accesible públicamente por HTTPS.
+4. Envía cambios a `main` o ejecuta manualmente el workflow. La variable `VITE_API_URL` se incorpora durante la compilación; si la cambias, vuelve a ejecutar el workflow para publicar una compilación nueva.
+
+Si no defines `VITE_API_URL`, el workflow usa `http://127.0.0.1:6072/api`, que sirve para desarrollo local, pero **no** para los visitantes de GitHub Pages. GitHub Pages solo aloja el frontend; el backend Flask debe desplegarse y mantenerse por separado.
 
 ## Funcionalidades
 
