@@ -1,0 +1,33 @@
+.glass-header {
+  background: rgb(15 23 42 / 85%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.hero-glow {
+  background: radial-gradient(circle at 70% 30%, rgb(0 242 254 / 15%) 0%, rgb(16 185 129 / 10%) 40%, #080c14 80%);
+}
+
+.card-hover-effect {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px -10px rgb(16 185 129 / 25%);
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
