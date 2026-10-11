@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import { clearAuthToken, deleteAccount, updateAccount } from './api/auth'
+import type { Customer } from './api/auth'
 import { fetchProducts } from './api/products'
-import { AccountModal, type Customer } from './components/AccountModal'
+import { AccountModal } from './components/AccountModal'
 import { CartDrawer } from './components/CartDrawer'
 import { Catalog } from './components/Catalog'
 import { Footer } from './components/Footer'
@@ -8,6 +10,7 @@ import { Header } from './components/Header'
 import { HeroSection } from './components/HeroSection'
 import { PcBuilder } from './components/PcBuilder'
 import { ProductModal } from './components/ProductModal'
+import { ProductAdmin } from './components/ProductAdmin'
 import { Toast } from './components/Toast'
 import type { Product } from './data/products'
 import { useCartStore } from './store/useCartStore'
@@ -34,11 +37,9 @@ function App() {
   const [search, setSearch] = useState('')
   const [selectedProductId, setSelectedProductId] = useState<string | null>(getProductIdFromUrl)
   const [builderOpen, setBuilderOpen] = useState(false)
+  const [productAdminOpen, setProductAdminOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
-  const [customer, setCustomer] = useState<Customer | null>(() => {
-    const saved = localStorage.getItem('novatech_customer_v1')
-    return saved ? (JSON.parse(saved) as Customer) : null
-  })
+  const [customer, setCustomer] = useState<Customer | null>(null)
   const [toastMessage, setToastMessage] = useState('')
   const [checkoutAfterLogin, setCheckoutAfterLogin] = useState(false)
   const [checkingOut, setCheckingOut] = useState(false)
@@ -57,6 +58,21 @@ function App() {
       setProducts(await fetchProducts())
     } catch (error) {
       setProductsError(error instanceof Error ? error.message : 'No se pudo cargar el catálogo.')
+    } finally {
+      setProductsLoading(false)
+    }
+  }
+
+  // Recarga el catálogo después de cada cambio administrativo.
+  const refreshProducts = async () => {
+    setProductsLoading(true)
+    setProductsError('')
+    try {
+      setProducts(await fetchProducts())
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo cargar el catálogo.'
+      setProductsError(message)
+      throw error
     } finally {
       setProductsLoading(false)
     }
@@ -123,9 +139,8 @@ function App() {
   }
 
   const handleLogin = (newCustomer: Customer) => {
-    // Mantiene la sesión de demostración en el navegador y continúa el pago si aplica.
+    // Guarda al usuario en estado y continúa el checkout si estaba pendiente.
     setCustomer(newCustomer)
-    localStorage.setItem('novatech_customer_v1', JSON.stringify(newCustomer))
     setAccountOpen(false)
     showToast(`¡Hola, ${newCustomer.name.split(' ')[0]}!`)
     if (checkoutAfterLogin) {
@@ -173,6 +188,7 @@ function App() {
         products={products}
         customer={customer}
         onOpenAccount={() => setAccountOpen(true)}
+        onOpenProductAdmin={() => setProductAdminOpen(true)}
         onOpenBuilder={() => setBuilderOpen(true)}
         onCategoryChange={setCategory}
         onSearch={setSearch}
@@ -233,6 +249,13 @@ function App() {
       <CartDrawer onCheckout={() => void checkout()} checkingOut={checkingOut} />
       <PcBuilder open={builderOpen} onClose={() => setBuilderOpen(false)} onToast={showToast} />
       <ProductModal product={selectedProduct} onClose={closeProduct} onToast={showToast} />
+      <ProductAdmin
+        open={productAdminOpen}
+        products={products}
+        onClose={() => setProductAdminOpen(false)}
+        onRefresh={refreshProducts}
+        onToast={showToast}
+      />
       <AccountModal
         open={accountOpen}
         customer={customer}
@@ -241,9 +264,21 @@ function App() {
           setCheckoutAfterLogin(false)
         }}
         onLogin={handleLogin}
+        onUpdateAccount={async (name, email) => {
+          const updatedCustomer = await updateAccount(name, email)
+          setCustomer(updatedCustomer)
+          showToast('Cuenta actualizada')
+          return updatedCustomer
+        }}
+        onDeleteAccount={async (password) => {
+          await deleteAccount(password)
+          setCustomer(null)
+          setAccountOpen(false)
+          showToast('Cuenta eliminada')
+        }}
         onLogout={() => {
           setCustomer(null)
-          localStorage.removeItem('novatech_customer_v1')
+          clearAuthToken()
           setAccountOpen(false)
           showToast('Sesión cerrada')
         }}

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Estilos globales y tokens de diseño compartidos por toda la tienda. */
 /* Define las fuentes y la paleta compartida de la interfaz. */
 @theme {
   --font-sans: "Plus Jakarta Sans", sans-serif;

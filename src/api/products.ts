@@ -26,6 +26,7 @@ function isProductListResponse(data: unknown): data is ProductListResponse {
   )
 }
 
+// Recupera el catálogo y valida IDs antes de entregarlo a los componentes.
 export async function fetchProducts(): Promise<Product[]> {
   // Propaga errores HTTP para que la interfaz pueda mostrar el estado de fallo.
   const response = await fetch(`${API_URL}/products`)

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import type { Customer } from './AccountModal'
+import type { Customer } from '../api/auth'
 import type { Product } from '../data/products'
 import { useCartStore } from '../store/useCartStore'
 
@@ -7,6 +7,7 @@ interface HeaderProps {
   products: Product[]
   customer: Customer | null
   onOpenAccount: () => void
+  onOpenProductAdmin: () => void
   onOpenBuilder: () => void
   onCategoryChange: (category: string) => void
   onSearch: (query: string) => void
@@ -27,6 +28,7 @@ export function Header({
   products,
   customer,
   onOpenAccount,
+  onOpenProductAdmin,
   onOpenBuilder,
   onCategoryChange,
   onSearch,
@@ -164,6 +166,13 @@ export function Header({
                     }} className="w-full rounded-xl px-3 py-2.5 text-left text-sm text-slate-300 hover:bg-slate-800">
                       <i className="fa-regular fa-user mr-2" aria-hidden="true" /> {customer ? 'Ver cuenta' : 'Iniciar sesión / Crear cuenta'}
                     </button>
+                    {/* La visibilidad mejora la navegación; el backend también verifica el permiso. */}
+                    {customer?.isAdmin && <button type="button" onClick={() => {
+                      setAccountOpen(false)
+                      onOpenProductAdmin()
+                    }} className="w-full rounded-xl px-3 py-2.5 text-left text-sm text-brand-300 hover:bg-slate-800">
+                      <i className="fa-solid fa-boxes-stacked mr-2" aria-hidden="true" /> Administrar productos
+                    </button>}
                     {customer && <button type="button" onClick={() => onToast('Para cerrar sesión, abre Mi Cuenta.')} className="w-full rounded-xl px-3 py-2.5 text-left text-sm text-slate-300 hover:bg-slate-800">Administrar cuenta</button>}
                   </div>
                 )}
